@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 5: Fall of Singapore — Interactive Quiz</title>
+<style>
+  :root {
+    --beige: #F0EDE8;
+    --green: #1C3A2E;
+    --green-soft: rgba(28,58,46,0.08);
+    --green-mid: rgba(28,58,46,0.16);
+    --amber: #C97A2B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--beige);
+    font-family: 'DM Sans', Arial, sans-serif;
+    color: var(--green);
+    margin: 0;
+    padding: 0;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 22px 18px 60px;
+  }
+  h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 22px;
+    margin: 0 0 2px 0;
+  }
+  .subtitle {
+    font-size: 13px;
+    opacity: 0.75;
+    margin-bottom: 14px;
+  }
+  .scorebar {
+    position: sticky;
+    top: 0;
+    background: var(--beige);
+    padding: 10px 0 12px;
+    border-bottom: 2px solid var(--green);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    z-index: 5;
+  }
+  .scorebar b { font-size: 16px; }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reset-btn:hover { background: var(--green-soft); }
+  h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 15px;
+    background: var(--green);
+    color: var(--beige);
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin: 22px 0 10px 0;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--green-mid);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .qtext {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+  .qtext .num { color: var(--amber); margin-right: 4px; }
+  textarea {
+    width: 100%;
+    min-height: 54px;
+    border: 1px solid var(--green-mid);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--green);
+    resize: vertical;
+    background: var(--beige);
+  }
+  textarea:focus { outline: 2px solid var(--amber); }
+  .row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    background: var(--green);
+    color: var(--beige);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn:hover { opacity: 0.88; }
+  .btn.secondary {
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+  .model {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--green-soft);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .model.show { display: block; }
+  .model b { color: var(--green); }
+  .mark-row {
+    display: none;
+    margin-top: 8px;
+    gap: 8px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .mark-row.show { display: flex; }
+  .mark-btn {
+    border: 1px solid var(--green);
+    background: none;
+    color: var(--green);
+    border-radius: 14px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .mark-btn.correct.active { background: #2f6b4f; color: #fff; border-color: #2f6b4f; }
+  .mark-btn.wrong.active { background: #a13d3d; color: #fff; border-color: #a13d3d; }
+  .card.marked-correct { border-left: 4px solid #2f6b4f; }
+  .card.marked-wrong { border-left: 4px solid #a13d3d; }
+  .key-phrase-note {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Chapter 5: Did Singapore Have to Fall to the Japanese in WWII?</h1>
+  <div class="subtitle">Type your answer, then reveal the model answer to check your phrasing. Bold = key phrases to memorise for the test.</div>
+
+  <div class="scorebar">
+    <div>Marked: <b id="markedCount">0</b>/<span id="totalCount">30</span> &nbsp; | &nbsp; Correct: <b id="correctCount">0</b></div>
+    <button class="reset-btn" onclick="resetAll()">Reset all</button>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="footer-note">Chapter 5 Interactive Quiz — self-marked, not saved after you close the tab</div>
+</div>
+
+<script>
+const questions = [
+  // Section A
+  {section:"Section A — Road to War", num:1, q:"What economic problem after WWI made Germans resentful, and who rose to power as a result?",
+   model:"The harsh peace treaty led to <b>hyperinflation</b> — Germans could not feed themselves. This discontent led to the rise of <b>Adolf Hitler and the Nazi Party</b>."},
+  {num:2, q:"What event in 1939 started WWII in Europe?",
+   model:"Germany <b>invaded Poland</b>, so Britain and France <b>declared war on Germany</b>."},
+  {num:3, q:"What was the 'Axis powers' pact, and who were its members?",
+   model:"A pact between <b>Germany, Italy, and Japan</b>."},
+  {num:4, q:"What was Japan's foreign policy from the 17th to mid-19th century, and what changed this in 1853?",
+   model:"Japan had <b>isolated itself</b> from the world. In <b>1853</b>, American warships arrived and forced Japan to <b>open up to trade</b>."},
+  {num:5, q:"Why did Japan want to build an empire in Asia Pacific? (2 reasons)",
+   model:"Japan is <b>mountainous with limited arable land</b> and <b>lacked natural resources</b>. It needed an empire to <b>feed its growing population</b> and <b>sustain its military/weapons manufacturing</b>."},
+  {num:6, q:"What happened in 1937, and how did the USA respond?",
+   model:"Japan <b>invaded China</b>. The USA responded by imposing a <b>trade embargo</b> on Japan."},
+  {num:7, q:"Why did Japan target Southeast Asia for resources?",
+   model:"Southeast Asia had good supplies of <b>tin and rubber</b>, which could <b>support Japan's war in China</b>."},
+  {num:8, q:"Give the date, target, and TWO reasons for the Pearl Harbor attack.",
+   model:"On <b>7 December 1941</b>, Japan attacked the US naval base at <b>Pearl Harbor</b> to (1) <b>prevent the USA from sending troops</b> to help defend Southeast Asia, and (2) take <b>revenge</b> for the trade embargo."},
+
+  // Section C
+  {section:"Section B — Why Malaya &amp; Singapore?", num:9, q:"Give TWO reasons why Malaya was a key target for Japan.",
+   model:"Malaya had good supplies of <b>tin and rubber</b>, which could <b>support the war in China</b>; it also had valuable <b>raw materials</b> generally."},
+  {num:10, q:"Why was Singapore specifically targeted?",
+   model:"Singapore was seen as an <b>ideal base to control the Dutch East Indies and Australia</b>, and to <b>manage Southeast Asia</b>."},
+
+  // Section D
+  {section:"Section C — The 'Impregnable' Fortress", num:11, q:"Explain the 'Singapore Strategy' in your own words.",
+   model:"Britain could not maintain a large permanent military force in Asia. In the event of war, Britain would <b>send warships to Singapore</b> to defend its colonies. While waiting for reinforcements, Singapore had to <b>rely on local defences</b>."},
+  {num:12, q:"List the physical defences Britain built in Singapore (naval base, guns, forts, airfields, bunkers) with key details.",
+   model:"<b>Naval base</b> at Sembawang (started 1938, completed 1941); <b>15-inch guns</b> installed in batteries facing the sea; <b>11 forts</b> along the coastal region; <b>airfields</b> at Tengah and Sembawang; <b>underground bunkers</b> at Fort Canning, Labrador, and Sembawang."},
+  {num:13, q:"Besides physical defences, give TWO other reasons people believed Singapore was 'impregnable'.",
+   model:"British <b>over-confidence/racial superiority</b> — they saw the Japanese as weak/inferior; and British <b>propaganda</b> in newspapers and films portraying Singapore as 'invincible', the '<b>Gibraltar of the East</b>'."},
+
+  // Section E
+  {section:"Section D — The Battle for Singapore", num:14, q:"On what date did Singapore fall, and how has this been described in British history?",
+   model:"Singapore fell on <b>15 February 1942</b> — described as the '<b>worst disaster</b>' and '<b>largest capitulation</b>' in British history."},
+  {num:15, q:"Who commanded the British and Japanese forces, and where did the surrender take place?",
+   model:"<b>Lieutenant-General Percival</b> (British) surrendered to <b>General Tomoyuki Yamashita</b> (Japanese) at the <b>Ford Motor Factory</b>."},
+
+  // Section F
+  {section:"Section E — British Weaknesses", num:16, q:"Explain why Britain gave 'low priority' to defending Singapore, and the consequence.",
+   model:"Britain was <b>busy fighting Germany in Europe</b> and needed to <b>defend its homeland first</b>, so defending eastern colonies was secondary — <b>troops and resources were insufficient</b> in number and quality."},
+  {num:17, q:"Describe Britain's weak air control and why it mattered.",
+   model:"Britain relied on outdated '<b>Buffalo fighters</b>' nicknamed '<b>flying coffins</b>' — no match for Japan's modern <b>Zero fighters</b>. This meant Britain <b>could not compete with Japanese air power</b>."},
+  {num:18, q:"Describe TWO problems with Britain's land forces.",
+   model:"Troops came from India and Scotland, causing <b>language barriers</b>; local Singapore Volunteer forces were <b>not fully loyal/committed</b>. Troops were also <b>poorly trained</b>, had <b>no tanks</b>, and had <b>little jungle warfare training</b>."},
+  {num:19, q:"What was 'Force Z', and what happened to it?",
+   model:"Force Z was <b>HMS Prince of Wales and HMS Repulse</b>. They sailed towards Kuantan on 8 December and were <b>sunk by Japanese planes on 10 December</b>, leaving Singapore's local forces without naval support."},
+  {num:20, q:"In the Thio Chan Bee source, what can be inferred about the locals' attitude, and what's the evidence?",
+   model:"<b>Inference:</b> the locals were very trusting of the British and confident the British would win. <b>Evidence:</b> 'Singapore as the Gibraltar of the East could be held by the British indefinitely... We were thus comforted and reassured.'"},
+
+  // Section G
+  {section:"Section F — Japanese Strengths", num:21, q:"How did Japan prepare its troops for jungle warfare, and who led this effort?",
+   model:"Japan set up a <b>special research unit under Colonel Masanobu Tsuji</b> to prepare troops for jungle fighting, including pamphlets with useful tips."},
+  {num:22, q:"Describe TWO ways Japan gathered intelligence on Singapore and Malaya before the invasion.",
+   model:"Japanese <b>businessmen</b> observed construction of the naval base and coastal defences; Japanese <b>fishing fleets</b> surveyed the Malayan coast; spies disguised as <b>tourists or barbers</b> gathered information; one officer, <b>Tsugunori</b>, worked as a waiter in the British Officers' Club for <b>6 years</b>."},
+  {num:23, q:"Describe the strength of Japanese forces (leadership, training, equipment style).",
+   model:"Led by the highly regarded <b>General Tomoyuki Yamashita</b>, troops were <b>experienced and battle-hardened</b> from the 2nd Sino-Japanese War, <b>well-trained for jungle warfare</b>, and <b>well-supported</b> with weapons and aircraft, though <b>lightly equipped</b> and using <b>bicycles and light tanks</b> to move quickly."},
+  {num:24, q:"Using the Freddie Spencer Chapman source, contrast the Japanese and British soldiers.",
+   model:"The Japanese were <b>lightly equipped</b>, informal, riding <b>bicycles</b>, and highly <b>determined</b> despite second-rate gear. The British were '<b>equipped like Christmas trees</b>' — over-burdened and unable to move or fight effectively."},
+
+  // Section H
+  {section:"Section G — The Big Picture", num:25, q:"How does Sun Tzu's quote ('Know thy enemy, know thy self...') apply to the fall of Singapore?",
+   model:"The British <b>underestimated the Japanese</b> (did not 'know thy enemy') and <b>over-estimated their own readiness</b> (did not truly 'know thy self') — this is why Singapore fell despite being thought 'impregnable'."}
+];
+
+const quizEl = document.getElementById('quiz');
+let html = '';
+let currentSection = '';
+questions.forEach((q, i) => {
+  if (q.section && q.section !== currentSection) {
+    currentSection = q.section;
+    html += `<h2>${currentSection}</h2>`;
+  }
+  html += `
+  <div class="card" id="card-${i}">
+    <div class="qtext"><span class="num">Q${q.num}.</span>${q.q}</div>
+    <textarea id="input-${i}" placeholder="Type your answer here..."></textarea>
+    <div class="row">
+      <button class="btn" onclick="reveal(${i})">Show Model Answer</button>
+    </div>
+    <div class="model" id="model-${i}">${q.model}</div>
+    <div class="mark-row" id="markrow-${i}">
+      <span>How did you do?</span>
+      <button class="mark-btn correct" onclick="mark(${i}, true)">✓ Got it</button>
+      <button class="mark-btn wrong" onclick="mark(${i}, false)">✗ Need to review</button>
+    </div>
+  </div>`;
+});
+quizEl.innerHTML = html;
+document.getElementById('totalCount').textContent = questions.length;
+
+let marks = {}; // {index: true/false}
+
+function reveal(i) {
+  document.getElementById('model-' + i).classList.add('show');
+  document.getElementById('markrow-' + i).classList.add('show');
+}
+
+function mark(i, correct) {
+  marks[i] = correct;
+  const card = document.getElementById('card-' + i);
+  card.classList.remove('marked-correct', 'marked-wrong');
+  card.classList.add(correct ? 'marked-correct' : 'marked-wrong');
+
+  const row = document.getElementById('markrow-' + i);
+  row.querySelectorAll('.mark-btn').forEach(b => b.classList.remove('active'));
+  row.querySelector(correct ? '.correct' : '.wrong').classList.add('active');
+
+  updateScore();
+}
+
+function updateScore() {
+  const values = Object.values(marks);
+  document.getElementById('markedCount').textContent = values.length;
+  document.getElementById('correctCount').textContent = values.filter(v => v).length;
+}
+
+function resetAll() {
+  if (!confirm('Clear all answers and marks?')) return;
+  marks = {};
+  questions.forEach((q, i) => {
+    document.getElementById('input-' + i).value = '';
+    document.getElementById('model-' + i).classList.remove('show');
+    document.getElementById('markrow-' + i).classList.remove('show');
+    document.getElementById('card-' + i).classList.remove('marked-correct', 'marked-wrong');
+    document.querySelectorAll('#markrow-' + i + ' .mark-btn').forEach(b => b.classList.remove('active'));
+  });
+  updateScore();
+}
+</script>
+</body>
+</html>
