@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Key Dates Quiz — Singapore in WWII &amp; After</title>
+<style>
+  :root {
+    --beige: #F0EDE8;
+    --green: #1C3A2E;
+    --green-soft: rgba(28,58,46,0.08);
+    --green-mid: rgba(28,58,46,0.16);
+    --amber: #C97A2B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--beige);
+    font-family: 'DM Sans', Arial, sans-serif;
+    color: var(--green);
+    margin: 0;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 22px 18px 60px;
+  }
+  h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 21px;
+    margin: 0 0 2px 0;
+  }
+  .subtitle {
+    font-size: 13px;
+    opacity: 0.75;
+    margin-bottom: 14px;
+  }
+  .scorebar {
+    position: sticky;
+    top: 0;
+    background: var(--beige);
+    padding: 10px 0 12px;
+    border-bottom: 2px solid var(--green);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    z-index: 5;
+  }
+  .scorebar b { font-size: 16px; }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reset-btn:hover { background: var(--green-soft); }
+  h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 15px;
+    background: var(--green);
+    color: var(--beige);
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin: 22px 0 10px 0;
+  }
+  .note {
+    font-size: 11.5px;
+    font-style: italic;
+    opacity: 0.75;
+    margin: -4px 0 10px 2px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--green-mid);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .card .event {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.4;
+    padding-top: 6px;
+  }
+  .card .event b { color: var(--green); }
+  .date-input-wrap {
+    width: 165px;
+    flex-shrink: 0;
+  }
+  input[type=text] {
+    width: 100%;
+    border: 1px solid var(--green-mid);
+    border-radius: 6px;
+    padding: 7px 9px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--green);
+    background: var(--beige);
+  }
+  input[type=text]:focus { outline: 2px solid var(--amber); }
+  .row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .btn {
+    background: var(--green);
+    color: var(--beige);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+  }
+  .btn:hover { opacity: 0.88; }
+  .model {
+    display: none;
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: var(--green-soft);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .model.show { display: block; }
+  .model .d { font-weight: 700; }
+  .mark-row {
+    display: none;
+    margin-top: 6px;
+    gap: 6px;
+  }
+  .mark-row.show { display: flex; }
+  .mark-btn {
+    border: 1px solid var(--green);
+    background: none;
+    color: var(--green);
+    border-radius: 14px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: inherit;
+  }
+  .mark-btn.correct.active { background: #2f6b4f; color: #fff; border-color: #2f6b4f; }
+  .mark-btn.wrong.active { background: #a13d3d; color: #fff; border-color: #a13d3d; }
+  .card.marked-correct { border-left: 4px solid #2f6b4f; }
+  .card.marked-wrong { border-left: 4px solid #a13d3d; }
+
+  .timeline-section {
+    background: #fff;
+    border: 1px solid var(--green-mid);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .timeline-list { font-size: 13px; line-height: 2; }
+  .timeline-list input[type=text] {
+    width: 40px;
+    display: inline-block;
+    margin-right: 8px;
+    text-align: center;
+    padding: 4px;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 30px;
+  }
+  @media (max-width: 560px) {
+    .card { flex-direction: column; }
+    .date-input-wrap { width: 100%; }
+  }
+
+  body { padding-bottom: 62px; }
+  .hv-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--green);
+    border-top: 2px solid var(--amber);
+    display: flex;
+    align-items: center;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    z-index: 20;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hv-nav a {
+    flex: 0 0 auto;
+    min-width: 40px;
+    text-align: center;
+    color: var(--beige);
+    text-decoration: none;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 6px 7px;
+    border-radius: 6px;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  .hv-nav a.active { opacity: 1; background: rgba(240,237,232,0.15); color: var(--amber); }
+  .hv-streak { color: var(--amber); font-size: 10.5px; font-weight: 700; padding: 0 8px; white-space: nowrap; flex: 0 0 auto; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Key Dates Quiz — Singapore in WWII &amp; After</h1>
+  <div class="subtitle">Type the date for each event, then reveal to check. Covers Chapter 5 (Fall of Singapore), the Japanese Occupation, and the Merger/Separation period.</div>
+
+  <div class="scorebar">
+    <div>Marked: <b id="markedCount">0</b>/<span id="totalCount">0</span> &nbsp; | &nbsp; Correct: <b id="correctCount">0</b></div>
+    <button class="reset-btn" onclick="resetAll()">Reset all</button>
+  </div>
+
+  <div id="quiz"></div>
+
+  <h2>Bonus — Put Them In Order</h2>
+  <div class="note">Without looking above, number these events 1 (earliest) to 8 (latest) in the boxes.</div>
+  <div class="timeline-section">
+    <div class="timeline-list">
+      <div><input type="text" maxlength="2"> Japan invades China</div>
+      <div><input type="text" maxlength="2"> Germany invades Poland (WWII starts in Europe)</div>
+      <div><input type="text" maxlength="2"> Japan attacks Pearl Harbor &amp; lands troops in Thailand/Malaya</div>
+      <div><input type="text" maxlength="2"> HMS Prince of Wales &amp; HMS Repulse are sunk</div>
+      <div><input type="text" maxlength="2"> Fall of Singapore / start of Japanese Occupation</div>
+      <div><input type="text" maxlength="2"> Operation Sook Ching</div>
+      <div><input type="text" maxlength="2"> Singapore joins the Federation of Malaysia</div>
+      <div><input type="text" maxlength="2"> Singapore becomes independent (separates from Malaysia)</div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn" style="width:auto;" onclick="toggleOrderAnswer()">Show Correct Order</button>
+    </div>
+    <div class="model" id="order-model">
+      1. Japan invades China — <b>1937</b><br>
+      2. Germany invades Poland — <b>1939</b><br>
+      3. Pearl Harbor / landings in Thailand &amp; Malaya — <b>7 Dec 1941</b><br>
+      4. HMS Prince of Wales &amp; Repulse sunk — <b>10 Dec 1941</b><br>
+      5. Fall of Singapore — <b>15 Feb 1942</b><br>
+      6. Operation Sook Ching — <b>Feb 1942</b><br>
+      7. Singapore joins Federation of Malaysia — <b>16 Sept 1963</b><br>
+      8. Singapore's independence / separation from Malaysia — <b>9 Aug 1965</b>
+    </div>
+  </div>
+
+  <div class="footer-note">Key Dates Quiz — self-marked, not saved after you close the tab</div>
+</div>
+
+<nav class="hv-nav">
+  <a href="sec2-history-hub.html">Hub</a>
+  <a href="sec2-history-ch5-shortanswer-quiz.html">Ch5</a>
+  <a href="sec2-history-ch6-tier1-games.html">Ch6</a>
+  <a href="sec2-history-ch7-tier1-games.html">Ch7</a>
+  <a href="sec2-history-ch8-tier1-games.html">Ch8</a>
+  <a href="sec2-history-boss-battle.html">Boss</a>
+  <a href="sec2-history-exam-bank.html">Exam</a>
+  <span class="hv-streak" id="hv-streak"></span>
+</nav>
+
+<script>
+const events = [
+  {section:"Road to War", event:"American warships arrive in Japan, forcing it to open up to trade", date:"1853", hook:"This ended Japan's centuries of isolation."},
+  {event:"Japan is highly industrialised with modern warships", date:"By 1905", hook:"Just over 50 years after opening up — rapid modernisation."},
+  {event:"Japan invades China; USA responds with a trade embargo", date:"1937", hook:"This pushed Japan to look at Southeast Asia for resources."},
+  {event:"Germany invades Poland — Britain &amp; France declare war (start of WWII in Europe)", date:"1939", hook:"2 years after Japan invaded China."},
+
+  {section:"Singapore's Defences", event:"Construction of the Sembawang naval base begins", date:"1938", hook:"Part of the 'Singapore Strategy'."},
+  {event:"The Sembawang naval base is completed", date:"1941", hook:"Completed just before the Japanese invasion."},
+
+  {section:"The Invasion", event:"Japan attacks Pearl Harbor AND lands troops in southern Thailand &amp; northern Malaya", date:"7 December 1941", hook:"Same day — a coordinated Japanese offensive."},
+  {event:"Force Z (HMS Prince of Wales &amp; HMS Repulse) sails towards Kuantan", date:"8 December 1941", hook:"Just 1 day after Pearl Harbor."},
+  {event:"HMS Prince of Wales &amp; HMS Repulse are sunk by Japanese planes", date:"10 December 1941", hook:"2 days after they set sail — Singapore loses naval support."},
+  {event:"Singapore falls to the Japanese ('worst disaster'/'largest capitulation' in British history)", date:"15 February 1942", hook:"About 2 months after Pearl Harbor."},
+
+  {section:"The Japanese Occupation", event:"Operation Sook Ching begins", date:"February 1942", hook:"Started right after the British surrender."},
+  {event:"The Japanese Occupation of Singapore (start to end)", date:"1942 – 1945", hook:"Ends with Japan's surrender in WWII."},
+
+  {section:"Post-War Singapore", event:"Singapore joins the Federation of Malaysia", date:"16 September 1963", hook:"Merger after the 1959 elections."},
+  {event:"Singapore becomes independent (separates from Malaysia)", date:"9 August 1965", hook:"Less than 2 years after the merger."}
+];
+
+const quizEl = document.getElementById('quiz');
+let html = '';
+let currentSection = '';
+events.forEach((e, i) => {
+  if (e.section && e.section !== currentSection) {
+    currentSection = e.section;
+    html += `<h2>${currentSection}</h2>`;
+  }
+  html += `
+  <div class="card" id="card-${i}">
+    <div class="event"><b>${i+1}.</b> ${e.event}</div>
+    <div class="date-input-wrap">
+      <input type="text" id="input-${i}" placeholder="Type the date...">
+      <div class="row"><button class="btn" onclick="reveal(${i})">Check</button></div>
+      <div class="model" id="model-${i}"><span class="d">${e.date}</span> — ${e.hook}</div>
+      <div class="mark-row" id="markrow-${i}">
+        <button class="mark-btn correct" onclick="mark(${i}, true)">✓ Got it</button>
+        <button class="mark-btn wrong" onclick="mark(${i}, false)">✗ Review</button>
+      </div>
+    </div>
+  </div>`;
+});
+quizEl.innerHTML = html;
+document.getElementById('totalCount').textContent = events.length;
+
+let marks = {};
+
+function reveal(i) {
+  document.getElementById('model-' + i).classList.add('show');
+  document.getElementById('markrow-' + i).classList.add('show');
+}
+
+function mark(i, correct) {
+  marks[i] = correct;
+  const card = document.getElementById('card-' + i);
+  card.classList.remove('marked-correct', 'marked-wrong');
+  card.classList.add(correct ? 'marked-correct' : 'marked-wrong');
+
+  const row = document.getElementById('markrow-' + i);
+  row.querySelectorAll('.mark-btn').forEach(b => b.classList.remove('active'));
+  row.querySelector(correct ? '.correct' : '.wrong').classList.add('active');
+
+  updateScore();
+}
+
+function updateScore() {
+  const values = Object.values(marks);
+  document.getElementById('markedCount').textContent = values.length;
+  document.getElementById('correctCount').textContent = values.filter(v => v).length;
+  if (values.length === events.length) hvStreak(true);
+}
+
+/* ---------- STREAK (shared across the whole hub via localStorage) ---------- */
+function hvStreak(markCompleted) {
+  const today = new Date().toISOString().slice(0, 10);
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem('historyVaultStreak') || '{}'); } catch (e) { data = {}; }
+  if (markCompleted && data.lastDate !== today) {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const yesterday = y.toISOString().slice(0, 10);
+    data.streak = (data.lastDate === yesterday) ? (data.streak || 0) + 1 : 1;
+    data.lastDate = today;
+    try { localStorage.setItem('historyVaultStreak', JSON.stringify(data)); } catch (e) {}
+  }
+  const el = document.getElementById('hv-streak');
+  if (el) el.textContent = data.streak ? ('\uD83D\uDD25 ' + data.streak) : '';
+}
+hvStreak(false);
+
+function toggleOrderAnswer() {
+  document.getElementById('order-model').classList.toggle('show');
+}
+
+function resetAll() {
+  if (!confirm('Clear all answers and marks?')) return;
+  marks = {};
+  events.forEach((e, i) => {
+    document.getElementById('input-' + i).value = '';
+    document.getElementById('model-' + i).classList.remove('show');
+    document.getElementById('markrow-' + i).classList.remove('show');
+    document.getElementById('card-' + i).classList.remove('marked-correct', 'marked-wrong');
+    document.querySelectorAll('#markrow-' + i + ' .mark-btn').forEach(b => b.classList.remove('active'));
+  });
+  document.querySelectorAll('.timeline-list input[type=text]').forEach(inp => inp.value = '');
+  document.getElementById('order-model').classList.remove('show');
+  updateScore();
+}
+</script>
+</body>
+</html>
