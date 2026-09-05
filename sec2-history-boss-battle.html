@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boss Battle — Sec 2 History Mixed Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --beige: #F0EDE8;
+    --green: #1C3A2E;
+    --green-soft: rgba(28,58,46,0.08);
+    --green-mid: rgba(28,58,46,0.16);
+    --amber: #C97A2B;
+    --good: #2f6b4f;
+    --bad: #a13d3d;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--green); font-family: 'DM Sans', Arial, sans-serif; color: var(--beige); margin: 0; }
+  .wrap { max-width: 700px; margin: 0 auto; padding: 20px 16px 70px; }
+  h1 { font-family: 'Lora', Georgia, serif; font-size: 21px; margin: 4px 0 2px; color: var(--beige); }
+  .subtitle { font-size: 12.5px; opacity: 0.8; margin-bottom: 16px; }
+  .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    background: var(--amber);
+    color: var(--green);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; margin-bottom: 14px; background: rgba(240,237,232,0.08);
+    padding: 8px 12px; border-radius: 8px;
+  }
+  .statusbar b { font-size: 16px; color: var(--amber); }
+  .progress-track { height: 5px; background: rgba(240,237,232,0.15); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progress-fill { height: 100%; background: var(--amber); width: 0%; transition: width 0.3s; }
+
+  .card {
+    background: var(--beige);
+    color: var(--green);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    margin-bottom: 14px;
+  }
+  .qtext { font-family: 'Lora', serif; font-size: 16.5px; font-weight: 700; line-height: 1.4; margin-bottom: 14px; }
+  .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--green-mid);
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--green);
+    cursor: pointer;
+  }
+  .option:hover { border-color: var(--amber); }
+  .option.correct { background: rgba(47,107,79,0.15); border-color: var(--good); }
+  .option.wrong { background: rgba(161,61,61,0.12); border-color: var(--bad); }
+  .option[disabled] { cursor: default; }
+
+  .btn {
+    background: var(--green);
+    color: var(--beige);
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .btn:hover { opacity: 0.88; }
+  .btn.gold { background: var(--amber); color: var(--green); }
+
+  .result-screen { text-align: center; padding: 40px 10px; }
+  .result-screen .big { font-family: 'Lora', serif; font-size: 30px; margin-bottom: 6px; color: var(--amber); }
+  .result-screen .msg { font-size: 14px; opacity: 0.85; margin-bottom: 20px; }
+
+  .footer-note { text-align: center; font-size: 11px; opacity: 0.55; margin-top: 26px; }
+
+  body { padding-bottom: 62px; }
+  .hv-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--green);
+    border-top: 2px solid var(--amber);
+    display: flex;
+    align-items: center;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    z-index: 20;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hv-nav a {
+    flex: 0 0 auto;
+    min-width: 40px;
+    text-align: center;
+    color: var(--beige);
+    text-decoration: none;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 6px 7px;
+    border-radius: 6px;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  .hv-nav a.active { opacity: 1; background: rgba(240,237,232,0.15); color: var(--amber); }
+  .hv-streak { color: var(--amber); font-size: 10.5px; font-weight: 700; padding: 0 8px; white-space: nowrap; flex: 0 0 auto; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Boss Battle</h1>
+  <div class="subtitle">Mixed review across Ch5 (Fall of Singapore), Ch7 (Return of the British) and Ch8 (Merger &amp; Separation).</div>
+
+  <div class="statusbar">
+    <span>Question <b id="q-count">1</b> / <span id="q-total"></span></span>
+    <span>Score: <b id="q-score">0</b></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+  <div id="quiz-area"></div>
+
+  <div class="footer-note">Sec 2 History Boss Battle — self-marked, not saved</div>
+</div>
+
+<nav class="hv-nav">
+  <a href="sec2-history-hub.html">Hub</a>
+  <a href="sec2-history-ch5-shortanswer-quiz.html">Ch5</a>
+  <a href="sec2-history-ch6-tier1-games.html">Ch6</a>
+  <a href="sec2-history-ch7-tier1-games.html">Ch7</a>
+  <a href="sec2-history-ch8-tier1-games.html">Ch8</a>
+  <a href="sec2-history-boss-battle.html" class="active">Boss</a>
+  <a href="sec2-history-exam-bank.html">Exam</a>
+  <a href="sec2-history-test-day.html">Test</a>
+  <span class="hv-streak" id="hv-streak"></span>
+</nav>
+
+<script>
+const bank = [
+  {ch:"Ch5", q:"What economic crisis in Germany after WWI helped Hitler and the Nazi Party rise to power?", correct:"Hyperinflation made it hard for Germans to afford basic goods", wrong:["A stock market crash caused by American loans","A famine caused by failed harvests","A currency freeze imposed by the League of Nations"]},
+  {ch:"Ch5", q:"Why did Japan need to build an empire in the Asia Pacific?", correct:"It lacked natural resources and farmland to support its population", wrong:["It wanted to spread its language and culture abroad","Its ally Germany ordered it to expand","It needed new markets for its car industry"]},
+  {ch:"Ch5", q:"What happened on 7 December 1941?", correct:"Japan attacked Pearl Harbor and landed troops in Thailand and Malaya", wrong:["Singapore surrendered to the Japanese","Germany invaded Poland","Britain declared war on Japan"]},
+  {ch:"Ch5", q:"What was \u201CForce Z\u201D?", correct:"Two British warships sent to intercept the Japanese, later sunk off Kuantan", wrong:["A secret British spy network in Malaya","The Japanese air squadron that bombed Singapore","A group of local resistance fighters"]},
+  {ch:"Ch5", q:"Why were British \u201CBuffalo\u201D fighter planes nicknamed \u201Cflying coffins\u201D?", correct:"They were outdated and no match for Japan's modern Zero fighters", wrong:["They frequently caught fire during landing","They were used to transport the wounded","Pilots refused to fly them"]},
+  {ch:"Ch5", q:"On what date did Singapore fall to the Japanese?", correct:"15 February 1942", wrong:["7 December 1941","16 September 1963","9 August 1965"]},
+  {ch:"Ch5", q:"Who surrendered to whom at the Ford Motor Factory?", correct:"Lieutenant-General Percival surrendered to General Yamashita", wrong:["General Yamashita surrendered to Percival","Tunku Abdul Rahman surrendered to Lee Kuan Yew","Percival surrendered to Lord Mountbatten"]},
+  {ch:"Ch5", q:"How does Sun Tzu's saying \u2018know thy enemy, know thy self\u2019 apply to the fall of Singapore?", correct:"The British underestimated the Japanese and overestimated their own readiness", wrong:["The Japanese did not understand British culture","Sun Tzu personally advised General Yamashita","It describes the rivalry between Percival and Yamashita"]},
+  {ch:"Ch7", q:"What effect did WWII have on how locals viewed the British?", correct:"It shattered the belief that the British were unbeatable colonial rulers", wrong:["It made locals trust British defences even more","It had no real effect on local attitudes","It convinced locals that Japan was a better ruler"]},
+  {ch:"Ch7", q:"What triggered the declaration of the Malayan Emergency in 1948?", correct:"The Malayan Communist Party killed three European planters", wrong:["Japanese soldiers refused to surrender","A trade union called a general strike","Riots broke out over food shortages"]},
+  {ch:"Ch7", q:"What was the Maria Hertogh case actually about?", correct:"A custody dispute over a girl raised as a Muslim, claimed by her birth parents", wrong:["A dispute over land ownership in Chinatown","The trial of a suspected communist spy","A disagreement over school curriculum"]},
+  {ch:"Ch7", q:"Why did Chinese-medium students protest against National Service in 1954?", correct:"They felt discriminated against compared to English-medium students", wrong:["They opposed fighting in the Malayan Emergency","They wanted National Service made compulsory for everyone","They demanded higher pay for conscripts"]},
+  {ch:"Ch7", q:"What did the Rendel Commission recommend for Singapore?", correct:"A partly elected local government with some local ministers", wrong:["Full independence for Singapore immediately","The abolition of all elections","Direct rule from London with no local input"]},
+  {ch:"Ch7", q:"Why did David Marshall resign as Chief Minister in 1956?", correct:"The British refused his demand for full self-government at the First Merdeka Talks", wrong:["He lost the 1956 election","He was arrested for pro-communist activity","He retired due to poor health"]},
+  {ch:"Ch7", q:"How did Lim Yew Hock handle the 1956 Chinese Middle School Students' protests?", correct:"He cracked down firmly, arresting hundreds of students", wrong:["He negotiated a compromise with student leaders","He ignored the protests entirely","He resigned in protest against the students"]},
+  {ch:"Ch7", q:"What did Singapore gain from the Second Merdeka Talks in 1957?", correct:"Full internal self-government, while Britain kept external affairs and defence", wrong:["Complete independence with no British involvement","A permanent seat in the British parliament","Control over the Malayan Emergency"]},
+  {ch:"Ch8", q:"Why did the PAP want merger with Malaya?", correct:"For economic benefits, and to gain independence from British rule", wrong:["To gain control over Malaya's military","Because the British ordered them to","To end the Malayan Emergency"]},
+  {ch:"Ch8", q:"What worried Malaya about merging with Singapore alone?", correct:"The Chinese population would outnumber the Malays", wrong:["Singapore's economy was too weak","Singapore had too many communists in government already","Singapore refused to accept a common market"]},
+  {ch:"Ch8", q:"What was the 1962 referendum about?", correct:"Singaporeans voting on the terms under which merger would happen", wrong:["Whether Singapore should merge with Malaya at all","Whether Lee Kuan Yew should remain Prime Minister","Whether Singapore should join the United Nations"]},
+  {ch:"Ch8", q:"Which country launched Konfrontasi against the newly formed Malaysia?", correct:"Indonesia", wrong:["Philippines","Thailand","Brunei"]},
+  {ch:"Ch8", q:"Why did tensions rise over the \u201Ccommon market\u201D after merger?", correct:"The Federal Government delayed setting it up and kept tariffs on Singapore goods", wrong:["Singapore refused to trade with Malaysia","Malaysia banned all Singapore exports completely","Singapore wanted to leave the common market"]},
+  {ch:"Ch8", q:"What sparked the 1964 racial riots in Singapore?", correct:"Tension during a procession marking Prophet Muhammad's birthday", wrong:["A dispute over National Service","The result of the 1959 general election","A radio speech by Tunku Abdul Rahman"]},
+  {ch:"Ch8", q:"On what date did Singapore separate from Malaysia?", correct:"9 August 1965", wrong:["16 September 1963","15 February 1942","31 August 1957"]},
+  {ch:"Ch6", q:"What was Singapore renamed during the Japanese Occupation?", correct:"Syonan-to", wrong:["Nippon-to","Showa-jima","Tojo-shima"]},
+  {ch:"Ch6", q:"Who did Operation Sook Ching specifically target?", correct:"The Chinese community, especially men aged 18 to 50", wrong:["All former British civil servants","Malay religious leaders","Indian plantation workers"]},
+  {ch:"Ch6", q:"Why did the Japanese demand $50 million Straits dollars from the Overseas Chinese Association?", correct:"As punishment for the Chinese community's earlier support of China against Japan", wrong:["To fund new housing for Chinese families","As a loan to rebuild Chinese-owned businesses","To pay for a new Chinese-language newspaper"]},
+  {ch:"Ch6", q:"Why did the relocation of Eurasians and Chinese Catholics to Bahau largely fail?", correct:"The land was hilly with poor soil, making farming difficult and leading to severe food shortages", wrong:["The settlers refused to farm the land at all","The Japanese abandoned the settlement immediately","Malaria wiped out the entire settlement within weeks"]},
+  {ch:"Ch6", q:"What caused Singapore's currency to collapse during the Occupation?", correct:"The Japanese overprinted so many 'banana notes' that the currency lost most of its value", wrong:["The British froze all bank accounts in Singapore","Singapore switched entirely to bartering goods","Japan banned the use of money altogether"]},
+  {ch:"Ch6", q:"Who led the China Relief Fund that Sook Ching was partly carried out in retaliation for?", correct:"Tan Kah Kee", wrong:["Lim Bo Seng","Mamoru Shinozaki","Subhas Chandra Bose"]},
+  {ch:"Ch6", q:"Why did the Japanese force Allied POWs to march publicly to Changi Prison?", correct:"To humiliate the British and dispel the myth that white colonial rulers were unbeatable", wrong:["To punish them specifically for looting during the surrender","To recruit them into the Japanese army","To relocate them to work on farms in Johor"]},
+  {ch:"Ch6", q:"What was the purpose of the Indian National Army, which the Japanese helped set up?", correct:"To appeal to Indians seeking independence from British rule", wrong:["To help the Japanese police Chinese neighbourhoods","To defend Singapore's naval base","To replace the Kempeitai as Singapore's police force"]}
+];
+
+function shuffledCopy(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+/* ---------- STREAK (shared across the whole hub via localStorage) ---------- */
+function hvStreak(markCompleted) {
+  const today = new Date().toISOString().slice(0, 10);
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem('historyVaultStreak') || '{}'); } catch (e) { data = {}; }
+  if (markCompleted && data.lastDate !== today) {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const yesterday = y.toISOString().slice(0, 10);
+    data.streak = (data.lastDate === yesterday) ? (data.streak || 0) + 1 : 1;
+    data.lastDate = today;
+    try { localStorage.setItem('historyVaultStreak', JSON.stringify(data)); } catch (e) {}
+  }
+  const el = document.getElementById('hv-streak');
+  if (el) el.textContent = data.streak ? ('\uD83D\uDD25 ' + data.streak) : '';
+}
+hvStreak(false);
+
+let quizOrder = shuffledCopy(bank);
+let idx = 0;
+let score = 0;
+
+document.getElementById('q-total').textContent = quizOrder.length;
+
+function renderQuestion() {
+  if (idx >= quizOrder.length) {
+    renderResult();
+    return;
+  }
+  document.getElementById('q-count').textContent = idx + 1;
+  document.getElementById('q-score').textContent = score;
+  document.getElementById('progress-fill').style.width = Math.round((idx / quizOrder.length) * 100) + '%';
+
+  const current = quizOrder[idx];
+  const opts = shuffledCopy([current.correct, ...current.wrong]);
+
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.textContent = current.ch;
+  card.appendChild(tag);
+
+  const qtext = document.createElement('div');
+  qtext.className = 'qtext';
+  qtext.textContent = current.q;
+  card.appendChild(qtext);
+
+  const optWrap = document.createElement('div');
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#quiz-area .option').forEach(o => o.disabled = true);
+      if (opt === current.correct) {
+        btn.classList.add('correct');
+        score++;
+      } else {
+        btn.classList.add('wrong');
+        document.querySelectorAll('#quiz-area .option').forEach(o => {
+          if (o.textContent === current.correct) o.classList.add('correct');
+        });
+      }
+      document.getElementById('q-score').textContent = score;
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'btn gold';
+      nextBtn.style.marginTop = '12px';
+      nextBtn.textContent = (idx + 1 >= quizOrder.length) ? 'See final score →' : 'Next question →';
+      nextBtn.addEventListener('click', () => { idx++; renderQuestion(); });
+      card.appendChild(nextBtn);
+    });
+    optWrap.appendChild(btn);
+  });
+  card.appendChild(optWrap);
+  area.appendChild(card);
+}
+
+function renderResult() {
+  hvStreak(true);
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('q-count').textContent = quizOrder.length;
+  const pct = Math.round((score / quizOrder.length) * 100);
+  let msg = "Solid — a bit more review on the chapters you missed and you'll have this locked in.";
+  if (pct === 100) msg = "Full marks — you've beaten the Boss Battle!";
+  else if (pct >= 80) msg = "Great work — just a few gaps to close.";
+  else if (pct < 50) msg = "Worth another pass through the Timeline Tap and Flashcard games first.";
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="card">
+      <div class="result-screen">
+        <div class="big">${score} / ${quizOrder.length}</div>
+        <div class="msg">${msg}</div>
+        <button class="btn gold" onclick="restart()">Play again</button>
+      </div>
+    </div>`;
+}
+
+function restart() {
+  quizOrder = shuffledCopy(bank);
+  idx = 0;
+  score = 0;
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
