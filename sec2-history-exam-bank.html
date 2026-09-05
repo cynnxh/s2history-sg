@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sec 2 History — Exam Answer Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --beige: #F0EDE8;
+    --green: #1C3A2E;
+    --green-soft: rgba(28,58,46,0.08);
+    --green-mid: rgba(28,58,46,0.16);
+    --amber: #C97A2B;
+    --amber-soft: rgba(201,122,43,0.12);
+    --good: #2f6b4f;
+    --bad: #a13d3d;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--beige); font-family: 'DM Sans', Arial, sans-serif; color: var(--green); margin: 0; padding-bottom: 62px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 18px 16px 70px; }
+  h1 { font-family: 'Lora', Georgia, serif; font-size: 19px; margin: 4px 0 2px; }
+  .subtitle { font-size: 12.5px; opacity: 0.75; margin-bottom: 14px; }
+
+  .tabs {
+    display: flex;
+    gap: 5px;
+    position: sticky;
+    top: 0;
+    background: var(--beige);
+    padding: 10px 0 10px;
+    z-index: 5;
+    border-bottom: 2px solid var(--green);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    flex: 0 0 auto;
+    background: none;
+    border: 1px solid var(--green);
+    color: var(--green);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab.active { background: var(--green); color: var(--beige); }
+
+  .panel { display: none; padding-top: 16px; }
+  .panel.active { display: block; }
+  .panel-intro { font-size: 12px; opacity: 0.75; margin-bottom: 12px; line-height: 1.45; }
+
+  .card { background: #fff; border: 1px solid var(--green-mid); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+
+  .tag { display: inline-block; font-size: 10px; letter-spacing: 0.3px; background: var(--amber); color: var(--green); padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-bottom: 8px; }
+
+  .statusbar { font-size: 12.5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .statusbar b { font-size: 15px; }
+
+  .btn { background: var(--green); color: var(--beige); border: none; border-radius: 6px; padding: 8px 14px; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 500; }
+  .btn:hover { opacity: 0.88; }
+  .btn.secondary { background: none; border: 1px solid var(--green); color: var(--green); }
+  .btn.small { padding: 5px 10px; font-size: 12px; }
+
+  .qtext { font-family: 'Lora', serif; font-size: 15.5px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; }
+
+  /* Build the Answer */
+  .chunk-card { background: var(--green-soft); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .chunk-text { font-size: 13px; line-height: 1.5; margin-bottom: 8px; }
+  .role-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .role-btn { flex: 1; min-width: 90px; border: 1px solid var(--green); background: #fff; color: var(--green); border-radius: 6px; padding: 6px 4px; font-size: 11px; font-family: inherit; cursor: pointer; text-align: center; }
+  .role-btn:hover { border-color: var(--amber); }
+  .role-btn.correct { background: rgba(47,107,79,0.15); border-color: var(--good); }
+  .role-btn.wrong { background: rgba(161,61,61,0.12); border-color: var(--bad); }
+  .role-btn[disabled] { cursor: default; }
+  .role-label { font-size: 10.5px; font-weight: 700; opacity: 0.6; margin-bottom: 4px; }
+  .full-answer { display: none; margin-top: 10px; padding: 10px 12px; background: var(--amber-soft); border-left: 3px solid var(--amber); border-radius: 0 6px 6px 0; font-size: 12.5px; line-height: 1.55; }
+  .full-answer.show { display: block; }
+  .full-answer .role-mark { font-weight: 700; color: var(--amber); }
+
+  /* Spot the Level / Complete the Link options */
+  .option { display: block; width: 100%; text-align: left; background: var(--beige); border: 1px solid var(--green-mid); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; font-family: inherit; color: var(--green); cursor: pointer; }
+  .option:hover { border-color: var(--amber); }
+  .option.correct { background: rgba(47,107,79,0.15); border-color: var(--good); }
+  .option.wrong { background: rgba(161,61,61,0.12); border-color: var(--bad); }
+  .option[disabled] { cursor: default; }
+  .level-row { display: flex; gap: 8px; margin-bottom: 4px; }
+  .level-row .option { text-align: center; font-weight: 700; margin-bottom: 0; }
+  .why-box { display: none; margin-top: 10px; padding: 10px 12px; background: var(--green-soft); border-radius: 8px; font-size: 12.5px; line-height: 1.5; }
+  .why-box.show { display: block; }
+
+  /* Quick Recall */
+  .recall-prompt { font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
+  .recall-answers { display: none; margin-bottom: 10px; padding: 10px 12px; background: var(--green-soft); border-radius: 8px; font-size: 12.5px; line-height: 1.6; }
+  .recall-answers.show { display: block; }
+  .recall-answers ul { margin: 4px 0 0; padding-left: 18px; }
+  .mark-row { display: flex; gap: 8px; margin-top: 10px; }
+  .mark-num { flex: 1; border: 1px solid var(--green); background: #fff; color: var(--green); border-radius: 6px; padding: 8px 4px; font-family: inherit; font-weight: 700; cursor: pointer; }
+  .mark-num.active { background: var(--green); color: var(--beige); }
+
+  /* Spot the Swap */
+  .swap-statement { font-size: 14px; line-height: 1.5; margin-bottom: 14px; padding: 12px 14px; background: var(--green-soft); border-radius: 8px; }
+  .swap-buttons { display: flex; gap: 10px; }
+  .swap-btn { flex: 1; padding: 12px 8px; border-radius: 8px; border: 1px solid var(--green); background: #fff; color: var(--green); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .swap-btn:hover { background: var(--green); color: var(--beige); }
+  .swap-feedback { margin-top: 10px; font-size: 12.5px; padding: 8px 10px; border-radius: 6px; display: none; }
+  .swap-feedback.show { display: block; }
+  .swap-feedback.correct { background: rgba(47,107,79,0.15); }
+  .swap-feedback.wrong { background: rgba(161,61,61,0.12); }
+
+  .done-msg { text-align: center; padding: 30px 10px; }
+  .done-msg .big { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 6px; }
+
+  .hv-nav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--green); border-top: 2px solid var(--amber); display: flex; align-items: center; padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); z-index: 20; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hv-nav a { flex: 0 0 auto; min-width: 40px; text-align: center; color: var(--beige); text-decoration: none; font-size: 10.5px; font-weight: 600; padding: 6px 7px; border-radius: 6px; opacity: 0.7; white-space: nowrap; }
+  .hv-nav a.active { opacity: 1; background: rgba(240,237,232,0.15); color: var(--amber); }
+  .hv-streak { color: var(--amber); font-size: 10.5px; font-weight: 700; padding: 0 8px; white-space: nowrap; flex: 0 0 auto; margin-left: 6px; }
+
+  .footer-note { text-align: center; font-size: 11px; opacity: 0.6; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Exam Answer Bank</h1>
+  <div class="subtitle">Practice by question type, across all chapters. Start with the tap games — save typed answers for last.</div>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="build">Build the Answer</button>
+    <button class="tab" data-panel="level">Spot the Level</button>
+    <button class="tab" data-panel="link">Complete the Link</button>
+    <button class="tab" data-panel="recall">Quick Recall</button>
+    <button class="tab" data-panel="swap">Spot the Swap</button>
+  </div>
+
+  <!-- BUILD THE ANSWER -->
+  <div class="panel active" id="panel-build">
+    <div class="panel-intro">Every strong answer has three parts: a <b>Point</b>, an <b>Elaboration + Example</b>, and an <b>Explain + Link</b> back to the question. Tap the correct label for each chunk below.</div>
+    <div class="card">
+      <div class="statusbar">Question <b id="build-count">1</b> of <span id="build-total"></span></div>
+      <div class="tag" id="build-tag"></div>
+      <div class="qtext" id="build-q"></div>
+      <div id="build-chunks"></div>
+      <div class="full-answer" id="build-full"></div>
+      <button class="btn secondary small" id="build-next" style="display:none; margin-top:10px;">Next question →</button>
+    </div>
+  </div>
+
+  <!-- SPOT THE LEVEL -->
+  <div class="panel" id="panel-level">
+    <div class="panel-intro">Read the answer below. Tap the mark-band level it would actually earn, based on how your teachers' rubrics grade these questions.</div>
+    <div class="card">
+      <div class="statusbar">Answer <b id="level-count">1</b> of <span id="level-total"></span></div>
+      <div class="tag" id="level-tag"></div>
+      <div class="qtext" id="level-q" style="font-size:13px; font-weight:500; font-family:'DM Sans',sans-serif; opacity:0.75; margin-bottom:8px;"></div>
+      <div class="recall-prompt" id="level-text"></div>
+      <div class="level-row" id="level-options"></div>
+      <div class="why-box" id="level-why"></div>
+      <button class="btn secondary small" id="level-next" style="display:none; margin-top:10px;">Next answer →</button>
+    </div>
+  </div>
+
+  <!-- COMPLETE THE LINK -->
+  <div class="panel" id="panel-link">
+    <div class="panel-intro">Here's a Point and Elaboration already written. Tap the sentence that correctly explains and links it back to the question.</div>
+    <div class="card">
+      <div class="statusbar">Question <b id="link-count">1</b> of <span id="link-total"></span></div>
+      <div class="tag" id="link-tag"></div>
+      <div class="recall-prompt" id="link-text"></div>
+      <div id="link-options"></div>
+      <button class="btn secondary small" id="link-next" style="display:none; margin-top:10px;">Next question →</button>
+    </div>
+  </div>
+
+  <!-- QUICK RECALL -->
+  <div class="panel" id="panel-recall">
+    <div class="panel-intro">These "state three..." questions just need the list — no elaboration. Try to recall three before you reveal.</div>
+    <div class="card">
+      <div class="statusbar">Prompt <b id="recall-count">1</b> of <span id="recall-total"></span> &nbsp;|&nbsp; Score: <b id="recall-score">0</b>/<span id="recall-max"></span></div>
+      <div class="recall-prompt" id="recall-prompt"></div>
+      <button class="btn small" id="recall-reveal">Reveal answers</button>
+      <div class="recall-answers" id="recall-answers"></div>
+      <div class="mark-row" id="recall-marks" style="display:none;">
+        <button class="mark-num" data-n="0">0</button>
+        <button class="mark-num" data-n="1">1</button>
+        <button class="mark-num" data-n="2">2</button>
+        <button class="mark-num" data-n="3">3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPOT THE SWAP -->
+  <div class="panel" id="panel-swap">
+    <div class="panel-intro">These statements are easy to attribute to the wrong side. Tap who this reasoning actually belongs to.</div>
+    <div class="card">
+      <div class="statusbar">Statement <b id="swap-count">1</b> of <span id="swap-total"></span> &nbsp;|&nbsp; Score: <b id="swap-score">0</b></div>
+      <div class="swap-statement" id="swap-statement"></div>
+      <div class="swap-buttons" id="swap-buttons"></div>
+      <div class="swap-feedback" id="swap-feedback"></div>
+    </div>
+  </div>
+
+  <div class="footer-note">Sec 2 History — Exam Answer Bank — self-marked, not saved</div>
+</div>
+
+<nav class="hv-nav">
+  <a href="sec2-history-hub.html">Hub</a>
+  <a href="sec2-history-ch5-shortanswer-quiz.html">Ch5</a>
+  <a href="sec2-history-ch6-tier1-games.html">Ch6</a>
+  <a href="sec2-history-ch7-tier1-games.html">Ch7</a>
+  <a href="sec2-history-ch8-tier1-games.html">Ch8</a>
+  <a href="sec2-history-boss-battle.html">Boss</a>
+  <a href="sec2-history-exam-bank.html" class="active">Exam</a>
+  <a href="sec2-history-test-day.html">Test</a>
+  <span class="hv-streak" id="hv-streak"></span>
+</nav>
+
+<script>
+function shuffledCopy(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+/* ---------- STREAK ---------- */
+function hvStreak(markCompleted) {
+  const today = new Date().toISOString().slice(0, 10);
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem('historyVaultStreak') || '{}'); } catch (e) { data = {}; }
+  if (markCompleted && data.lastDate !== today) {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const yesterday = y.toISOString().slice(0, 10);
+    data.streak = (data.lastDate === yesterday) ? (data.streak || 0) + 1 : 1;
+    data.lastDate = today;
+    try { localStorage.setItem('historyVaultStreak', JSON.stringify(data)); } catch (e) {}
+  }
+  const el = document.getElementById('hv-streak');
+  if (el) el.textContent = data.streak ? ('\uD83D\uDD25 ' + data.streak) : '';
+}
+hvStreak(false);
+
+/* ---------- TABS ---------- */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+const hashPanel = window.location.hash.replace('#', '');
+if (hashPanel) {
+  const t = document.querySelector('.tab[data-panel="' + hashPanel + '"]');
+  if (t) t.click();
+}
+
+/* ================= BUILD THE ANSWER ================= */
+const buildData = [
+  {ch:"Ch5", q:"Explain why Britain's weak air power contributed to the fall of Singapore.",
+   point:"Britain's ageing 'Buffalo' fighter planes were badly outmatched by Japan's modern aircraft.",
+   elab:"Pilots nicknamed the Buffalos 'flying coffins' because they were slower and less manoeuvrable than the Japanese Zero fighters, which quickly gained control of the skies over Malaya and Singapore.",
+   link:"Without air cover, British troops and ships on the ground were left exposed to bombing and strafing attacks, which sped up the collapse of Singapore's defences."},
+  {ch:"Ch6", q:"Explain how the Japanese used Operation Sook Ching to control the local population.",
+   point:"The Japanese carried out Operation Sook Ching, a mass screening operation that targeted the Chinese community.",
+   elab:"All Chinese men between 18 and 50 had to report to screening centres, and those suspected of anti-Japanese sympathies were taken away; estimates of the number killed range from about 6,000 to 50,000.",
+   link:"News of the killings spread quickly, and the fear this created meant most survivors avoided anything that could be seen as anti-Japanese, helping the Japanese maintain control with less active resistance."},
+  {ch:"Ch6", q:"Explain how the Japanese used propaganda to win the loyalty of locals.",
+   point:"The Japanese used propaganda to present themselves as liberators freeing Asians from colonial rule.",
+   elab:"Newspapers, radio broadcasts and posters spread the idea of a 'Greater East Asia Co-Prosperity Sphere', and the Japanese helped set up the Indian National Army to appeal to Indians seeking independence from Britain.",
+   link:"By convincing some locals that Japanese rule served their own interests, the Japanese hoped to reduce resistance and encourage cooperation instead."},
+  {ch:"Ch7", q:"Explain one way the British tried to win local support in post-war Singapore.",
+   point:"The British tackled the housing crisis by expanding low-cost housing through the Singapore Improvement Trust.",
+   elab:"Wartime damage and a growing population had left many families in overcrowded conditions, so the SIT sped up construction, building over 20,000 housing and shop units between 1947 and 1959.",
+   link:"This eased some of the pressure on housing and signalled that the British were responding to local needs, helping to rebuild trust after the war."},
+  {ch:"Ch7", q:"Explain how the Rendel Constitution changed how Singapore was governed.",
+   point:"The Rendel Constitution introduced limited self-government, giving Singapore its first partly elected local ministers.",
+   elab:"Local ministers gained control over areas like education and housing, while the British retained control of defence, finance and external affairs.",
+   link:"This gave locals a genuine share of political power for the first time, which fed growing expectations for full self-rule in the years that followed."},
+  {ch:"Ch8", q:"Explain why the communist threat was a reason for Singapore's merger with Malaya.",
+   point:"Leaders worried that a politically unstable Singapore could fall under communist influence.",
+   elab:"The PAP had already lost ground to left-wing politicians in local by-elections, and a breakaway party formed by former PAP members showed how much support the communists could draw on.",
+   link:"Merging with Malaya's stronger, anti-communist government meant Singapore could rely on outside support to keep this threat in check, which made merger an appealing way to secure long-term political stability."},
+  {ch:"Ch8", q:"Explain why the delay in setting up a common market strained relations between Singapore and Malaysia.",
+   point:"Singapore had expected a common market to be set up quickly after merger, removing tariffs on goods it sold to Malaysia.",
+   elab:"Instead, the Federal Government kept delaying the common market and continued charging tariffs on Singapore-made goods to protect Malaysian industries.",
+   link:"This meant Singapore's economy did not benefit from merger the way it had hoped, which fed growing frustration that contributed to the eventual decision to separate."}
+];
+
+let buildOrder = shuffledCopy(buildData);
+let buildIdx = 0;
+document.getElementById('build-total').textContent = buildOrder.length;
+
+function renderBuild() {
+  if (buildIdx >= buildOrder.length) {
+    document.getElementById('panel-build').querySelector('.card').innerHTML =
+      '<div class="done-msg"><div class="big">Deck complete!</div>Tap another tab, or reload to go again.</div>';
+    hvStreak(true);
+    return;
+  }
+  const q = buildOrder[buildIdx];
+  document.getElementById('build-count').textContent = buildIdx + 1;
+  document.getElementById('build-tag').textContent = q.ch;
+  document.getElementById('build-q').textContent = q.q;
+  document.getElementById('build-next').style.display = 'none';
+  document.getElementById('build-full').classList.remove('show');
+
+  const chunks = shuffledCopy([
+    {text: q.point, role: 'point'},
+    {text: q.elab, role: 'elab'},
+    {text: q.link, role: 'link'}
+  ]);
+
+  const wrap = document.getElementById('build-chunks');
+  wrap.innerHTML = '';
+  let answeredCount = 0;
+
+  chunks.forEach(chunk => {
+    const card = document.createElement('div');
+    card.className = 'chunk-card';
+    const txt = document.createElement('div');
+    txt.className = 'chunk-text';
+    txt.textContent = chunk.text;
+    card.appendChild(txt);
+
+    const roleRow = document.createElement('div');
+    roleRow.className = 'role-row';
+    [['point','Point'], ['elab','Elaboration + Example'], ['link','Explain + Link']].forEach(([key, label]) => {
+      const btn = document.createElement('button');
+      btn.className = 'role-btn';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        roleRow.querySelectorAll('.role-btn').forEach(b => b.disabled = true);
+        if (key === chunk.role) {
+          btn.classList.add('correct');
+        } else {
+          btn.classList.add('wrong');
+          roleRow.querySelectorAll('.role-btn').forEach(b => {
+            if (b.textContent === (chunk.role === 'point' ? 'Point' : chunk.role === 'elab' ? 'Elaboration + Example' : 'Explain + Link')) {
+              b.classList.add('correct');
+            }
+          });
+        }
+        answeredCount++;
+        if (answeredCount === 3) {
+          const full = document.getElementById('build-full');
+          full.innerHTML = '<span class="role-mark">POINT</span> ' + q.point + '<br><br><span class="role-mark">ELABORATION + EXAMPLE</span> ' + q.elab + '<br><br><span class="role-mark">EXPLAIN + LINK</span> ' + q.link;
+          full.classList.add('show');
+          document.getElementById('build-next').style.display = 'inline-block';
+        }
+      });
+      roleRow.appendChild(btn);
+    });
+    card.appendChild(roleRow);
+    wrap.appendChild(card);
+  });
+}
+document.getElementById('build-next').addEventListener('click', () => { buildIdx++; renderBuild(); });
+renderBuild();
+
+/* ================= SPOT THE LEVEL ================= */
+const levelData = [
+  {ch:"Ch8", q:"Explain why Singapore wanted merger with Malaya.", level:"L2",
+   text:"Singapore wanted merger because of economic reasons and political reasons.",
+   why:"This identifies two reasons but doesn't describe or explain either one \u2014 no detail, no example, no link back to the question. That's the ceiling for a bare list."},
+  {ch:"Ch8", q:"Explain why the communist threat was a reason for Singapore's merger with Malaya.", level:"L3",
+   text:"One reason was the communist threat. The PAP had lost some support to left-wing politicians, and former party members broke away to form Barisan Sosialis, which showed how strong the communists were becoming in Singapore.",
+   why:"This describes the reason with real detail and an example, but stops there \u2014 it never explicitly ties this back to why it made merger attractive. Missing the Explain + Link caps it below full marks."},
+  {ch:"Ch8", q:"Explain why the communist threat was a reason for Singapore's merger with Malaya.", level:"L4",
+   text:"Leaders worried that a politically unstable Singapore could fall under communist influence. The PAP had already lost ground to left-wing politicians in local by-elections, and a breakaway party formed by former PAP members showed how much support the communists could draw on. Merging with Malaya's stronger, anti-communist government meant Singapore could rely on outside support to keep this threat in check, which made merger an appealing way to secure long-term political stability.",
+   why:"All three parts are here: a clear point, detail with a real example, and an explicit link back to why this made merger attractive. This is what full marks looks like."},
+  {ch:"Ch7", q:"Describe British attempts to win local support after WWII.", level:"L1",
+   text:"After the war, Singapore faced many problems and needed help from outside.",
+   why:"This describes the general post-war situation but doesn't identify any specific British attempt at all \u2014 it isn't actually answering the question yet."},
+  {ch:"Ch6", q:"Explain how the Japanese controlled the people of Singapore by force.", level:"L2",
+   text:"The Japanese used harsh punishments and Operation Sook Ching to control people.",
+   why:"Two valid methods are named, but neither is described \u2014 no detail on what either method actually involved. This is a list, not a description."},
+  {ch:"Ch6", q:"Explain how the Japanese used Operation Sook Ching to control the local population.", level:"L4",
+   text:"The Japanese carried out Operation Sook Ching, a mass screening operation that targeted the Chinese community. All Chinese men between 18 and 50 had to report to screening centres, and those suspected of anti-Japanese sympathies were taken away; estimates of the number killed range from about 6,000 to 50,000. News of the killings spread quickly, and the fear this created meant most survivors avoided anything that could be seen as anti-Japanese, helping the Japanese maintain control with less active resistance.",
+   why:"Point, elaboration with real figures, and an explicit link to how this achieved control \u2014 all three elements present."}
+];
+
+let levelOrder = shuffledCopy(levelData);
+let levelIdx = 0;
+document.getElementById('level-total').textContent = levelOrder.length;
+
+function renderLevel() {
+  if (levelIdx >= levelOrder.length) {
+    document.getElementById('panel-level').querySelector('.card').innerHTML =
+      '<div class="done-msg"><div class="big">Deck complete!</div>Tap another tab, or reload to go again.</div>';
+    return;
+  }
+  const item = levelOrder[levelIdx];
+  document.getElementById('level-count').textContent = levelIdx + 1;
+  document.getElementById('level-tag').textContent = item.ch;
+  document.getElementById('level-q').textContent = item.q;
+  document.getElementById('level-text').textContent = item.text;
+  document.getElementById('level-next').style.display = 'none';
+  const why = document.getElementById('level-why');
+  why.classList.remove('show');
+  why.textContent = '';
+
+  const optWrap = document.getElementById('level-options');
+  optWrap.innerHTML = '';
+  ['L1', 'L2', 'L3', 'L4'].forEach(lv => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = lv;
+    btn.addEventListener('click', () => {
+      optWrap.querySelectorAll('.option').forEach(o => o.disabled = true);
+      if (lv === item.level) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+        optWrap.querySelectorAll('.option').forEach(o => { if (o.textContent === item.level) o.classList.add('correct'); });
+      }
+      why.textContent = item.why;
+      why.classList.add('show');
+      document.getElementById('level-next').style.display = 'inline-block';
+    });
+    optWrap.appendChild(btn);
+  });
+}
+document.getElementById('level-next').addEventListener('click', () => { levelIdx++; renderLevel(); });
+renderLevel();
+
+/* ================= COMPLETE THE LINK ================= */
+const linkData = [
+  {ch:"Ch7", text:"The British responded to food shortages by opening People's Restaurants, which sold meals at affordable prices. By the end of 1946 there were ten such restaurants across Singapore.",
+   correct:"This helped reduce the risk of hunger driving people towards unrest, showing locals that the British were taking their daily struggles seriously.",
+   wrong:["This meant there were more restaurants than before the war.", "This encouraged more people to vote in the first elections held in 1948.", "This solved Singapore's food shortages completely for the rest of the Occupation period."]},
+  {ch:"Ch8", text:"Malaysia raised Singapore's required contribution to federal revenue from 40% to 60%, citing higher defence spending caused by Konfrontasi.",
+   correct:"Singapore saw this as unfair given it was also suffering economically from Konfrontasi, which deepened resentment between the two governments.",
+   wrong:["This meant Singapore no longer had to pay any revenue to the federal government.", "This convinced Singapore to increase its own defence spending independently.", "This led the British to intervene and cancel the increase."]},
+  {ch:"Ch6", text:"The Japanese forced the Overseas Chinese Association to hand over $50 million Straits dollars as 'atonement' for the community's earlier support of China.",
+   correct:"This drained the wealth of a community the Japanese already viewed with suspicion, further punishing them for resisting Japan's invasion of China.",
+   wrong:["This meant the Chinese community was excused from any further Japanese demands.", "This encouraged closer cooperation between the OCA and the British.", "This was used to fund new schools for Chinese students in Singapore."]},
+  {ch:"Ch5", text:"Force Z, made up of HMS Prince of Wales and HMS Repulse, sailed towards Kuantan without air cover and was sunk by Japanese planes on 10 December 1941.",
+   correct:"This left Singapore's defenders without naval support just days into the campaign, making Japan's advance down Malaya even harder to stop.",
+   wrong:["This forced Japan to abandon its plan to attack Malaya.", "This convinced Britain to send even more warships to Singapore immediately.", "This had no real effect on the rest of the campaign."]},
+  {ch:"Ch7", text:"Marshall's government negotiated directly with striking bus workers during the Hock Lee Bus Riots, securing their reinstatement and back pay.",
+   correct:"The British saw this as evidence that Marshall was too soft on labour unrest possibly linked to communists, which weakened their confidence in his government.",
+   wrong:["This ended all industrial unrest in Singapore for the rest of the 1950s.", "This convinced the British to grant Singapore full independence immediately.", "This had no effect on how the British viewed Marshall's government."]}
+];
+
+let linkOrder = shuffledCopy(linkData);
+let linkIdx = 0;
+document.getElementById('link-total').textContent = linkOrder.length;
+
+function renderLink() {
+  if (linkIdx >= linkOrder.length) {
+    document.getElementById('panel-link').querySelector('.card').innerHTML =
+      '<div class="done-msg"><div class="big">Deck complete!</div>Tap another tab, or reload to go again.</div>';
+    return;
+  }
+  const item = linkOrder[linkIdx];
+  document.getElementById('link-count').textContent = linkIdx + 1;
+  document.getElementById('link-tag').textContent = item.ch;
+  document.getElementById('link-text').textContent = item.text;
+  document.getElementById('link-next').style.display = 'none';
+
+  const opts = shuffledCopy([item.correct, ...item.wrong]);
+  const wrap = document.getElementById('link-options');
+  wrap.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      wrap.querySelectorAll('.option').forEach(o => o.disabled = true);
+      if (opt === item.correct) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+        wrap.querySelectorAll('.option').forEach(o => { if (o.textContent === item.correct) o.classList.add('correct'); });
+      }
+      document.getElementById('link-next').style.display = 'inline-block';
+    });
+    wrap.appendChild(btn);
+  });
+}
+document.getElementById('link-next').addEventListener('click', () => { linkIdx++; renderLink(); });
+renderLink();
+
+/* ================= QUICK RECALL ================= */
+const recallData = [
+  {ch:"Ch7", prompt:"State three riots that took place in Singapore between 1945 and 1965.",
+   answers:["Maria Hertogh Riots (1950)", "Anti-National Service Riots (1954)", "Hock Lee Bus Riots (1955)", "Chinese Middle School Students' Riots (1956)", "1964 Racial Riots"]},
+  {ch:"Ch6", prompt:"State three economic difficulties faced by people in Singapore during the Japanese Occupation.",
+   answers:["Food shortages / rationing", "A flourishing black market with extremely high prices", "The collapsing value of 'banana money' (Japanese currency)"]},
+  {ch:"Ch7", prompt:"State three ways the British tried to win back local support after WWII.",
+   answers:["Building low-cost housing through the Singapore Improvement Trust", "Opening People's Restaurants selling cheap food", "Passing laws to control trade unions", "Restoring trade and repairing the ports", "Holding Singapore's first elections in 1948"]},
+  {ch:"Ch8", prompt:"State the three states (besides Malaya) that merged to form Malaysia in 1963.",
+   answers:["Singapore", "Sabah", "Sarawak"]},
+  {ch:"Ch6", prompt:"State three methods the Japanese used to control the local population.",
+   answers:["Meting out harsh punishments", "Carrying out Operation Sook Ching", "Imprisoning Allied soldiers as POWs", "Coercing the Chinese business community", "Using propaganda", "Imposing Japanese culture and language"]}
+];
+
+let recallOrder = shuffledCopy(recallData);
+let recallIdx = 0;
+let recallScore = 0;
+document.getElementById('recall-total').textContent = recallOrder.length;
+document.getElementById('recall-max').textContent = recallOrder.length * 3;
+
+function renderRecall() {
+  if (recallIdx >= recallOrder.length) {
+    document.getElementById('panel-recall').querySelector('.card').innerHTML =
+      `<div class="done-msg"><div class="big">Score: ${recallScore} / ${recallOrder.length * 3}</div>Tap another tab, or reload to go again.</div>`;
+    hvStreak(true);
+    return;
+  }
+  const item = recallOrder[recallIdx];
+  document.getElementById('recall-count').textContent = recallIdx + 1;
+  document.getElementById('recall-score').textContent = recallScore;
+  document.getElementById('recall-prompt').textContent = item.prompt;
+  const ans = document.getElementById('recall-answers');
+  ans.classList.remove('show');
+  ans.innerHTML = 'Any three of:<ul>' + item.answers.map(a => `<li>${a}</li>`).join('') + '</ul>';
+  document.getElementById('recall-reveal').style.display = 'inline-block';
+  document.getElementById('recall-marks').style.display = 'none';
+  document.querySelectorAll('.mark-num').forEach(b => b.classList.remove('active'));
+}
+document.getElementById('recall-reveal').addEventListener('click', () => {
+  document.getElementById('recall-answers').classList.add('show');
+  document.getElementById('recall-reveal').style.display = 'none';
+  document.getElementById('recall-marks').style.display = 'flex';
+});
+document.querySelectorAll('.mark-num').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mark-num').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    recallScore += parseInt(btn.dataset.n, 10);
+    document.getElementById('recall-score').textContent = recallScore;
+    setTimeout(() => { recallIdx++; renderRecall(); }, 500);
+  });
+});
+renderRecall();
+
+/* ================= SPOT THE SWAP ================= */
+const swapData = [
+  {text:"A common market would let Singapore's manufactured goods be sold in a much bigger market without tariffs.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"a"},
+  {text:"Combining Singapore's Chinese population with Malaya's would leave the Malay community outnumbered in a new federation.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"b"},
+  {text:"Britain would only grant full independence if Singapore joined a larger federation.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"a"},
+  {text:"Left-wing politicians expelled from the PAP might use Singapore as a base to spread communism into Malaya.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"b"},
+  {text:"Singapore's economy needed access to raw materials that Malaya could supply.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"a"},
+  {text:"A newly independent Singapore might not have a government stable enough to keep communists from gaining power.", a:"PAP's reason for wanting merger", b:"Tunku's reason against merger", correct:"b"},
+  {text:"The Japanese executed people caught looting and displayed their heads in public to warn others against resisting.", a:"Method: using force", b:"Method: winning loyalty", correct:"a"},
+  {text:"The Japanese distributed free textbooks to thousands of students and provided extra food for Malay and Indian communities during festivals.", a:"Method: using force", b:"Method: winning loyalty", correct:"b"}
+];
+
+let swapOrder = shuffledCopy(swapData);
+let swapIdx = 0;
+let swapScore = 0;
+document.getElementById('swap-total').textContent = swapOrder.length;
+
+function renderSwap() {
+  if (swapIdx >= swapOrder.length) {
+    document.getElementById('panel-swap').querySelector('.card').innerHTML =
+      `<div class="done-msg"><div class="big">Score: ${swapScore} / ${swapOrder.length}</div>Tap another tab, or reload to go again.</div>`;
+    hvStreak(true);
+    return;
+  }
+  const item = swapOrder[swapIdx];
+  document.getElementById('swap-count').textContent = swapIdx + 1;
+  document.getElementById('swap-score').textContent = swapScore;
+  document.getElementById('swap-statement').textContent = item.text;
+  const fb = document.getElementById('swap-feedback');
+  fb.className = 'swap-feedback';
+  fb.textContent = '';
+
+  const btnWrap = document.getElementById('swap-buttons');
+  btnWrap.innerHTML = '';
+  [['a', item.a], ['b', item.b]].forEach(([key, label]) => {
+    const btn = document.createElement('button');
+    btn.className = 'swap-btn';
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      const correct = key === item.correct;
+      if (correct) swapScore++;
+      fb.classList.add('show', correct ? 'correct' : 'wrong');
+      fb.textContent = correct
+        ? 'Correct \u2014 that\u2019s ' + (item.correct === 'a' ? item.a : item.b) + '.'
+        : 'Not quite \u2014 this is actually ' + (item.correct === 'a' ? item.a : item.b) + '.';
+      btnWrap.querySelectorAll('.swap-btn').forEach(b => b.disabled = true);
+      setTimeout(() => { swapIdx++; renderSwap(); }, 1300);
+    });
+    btnWrap.appendChild(btn);
+  });
+}
+renderSwap();
+</script>
+</body>
+</html>
